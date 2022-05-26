@@ -32,8 +32,12 @@ from sklearn.multiclass import OneVsRestClassifier,OneVsOneClassifier
 import joblib
 
 data = pd.read_csv("airline-price-classification.csv")
+dataTest = pd.read_csv("airline-test-samples.csv")
 
 print(data.head())
+print("--------------------------------------------")
+print(dataTest.head())
+
 proc = preprocessing.LabelEncoder()
 
 data['TicketCategory'] = proc.fit_transform(data['TicketCategory'])
@@ -177,8 +181,10 @@ dicision = tree.DecisionTreeClassifier()
 dicision = dicision.fit(X_train, y_train)
 joblib.dump(dicision, filenameDicision)
 tree.plot_tree(dicision)
-
+# loadDicisionModel = joblib.load(filenameDicision)
 y_predict   = dicision.predict(X_test)
+# y_predictload = loadDicisionModel.predict(X_test)
+
 for i in range(20):
     trueValue = np.asarray(y_test)[i]
     predictedValue = y_predict[i]
@@ -193,63 +199,69 @@ print("Accuracy using Decision Tree = ", metrics.accuracy_score(y_test, y_predic
 print('---------------------------------------------------------------')
 
 
+
+
 # #Random Forest Classifier
-# rand_forest = RandomForestClassifier()
-# rand_forest.fit(X_train, y_train)
-# y_predict = rand_forest.predict(X_test)
+filenameRandomForest = "finalModelRandomForest.sav"
+rand_forest = RandomForestClassifier()
+rand_forest.fit(X_train, y_train)
+joblib.dump(rand_forest, filenameRandomForest)
+y_predict = rand_forest.predict(X_test)
 
-# print('Random Forest Classifier')
-# print("Mean Square Error", metrics.mean_squared_error(y_test, y_predict))
-# print("True value  in the test set: " + str(trueValue))
-# print("Predicted value  in the test set: " + str(predictedValue))
-# print('score:', r2_score(y_test, y_predict))
-# print("Accuracy using Random Forest = ", metrics.accuracy_score(y_test, y_predict))
-# print('---------------------------------------------------------------')
+print('Random Forest Classifier')
+print("Mean Square Error", metrics.mean_squared_error(y_test, y_predict))
+print("True value  in the test set: " + str(trueValue))
+print("Predicted value  in the test set: " + str(predictedValue))
+print('score:', r2_score(y_test, y_predict))
+print("Accuracy using Random Forest = ", metrics.accuracy_score(y_test, y_predict))
+print('---------------------------------------------------------------')
 
-# # #Gradient Boost Classifier
-# # gb = GradientBoostingClassifier()
-# # gb.fit(X_train, y_train)
-# # y_predict = gb.predict(X_test)
-# # print("Accuracy using Gradient Boost = ", metrics.accuracy_score(y_test, y_predict))
-
-
-# # #Gaussian Naive Bayes
-# # gnb = GaussianNB()
-# # gnb.fit(X_train, y_train)
-# # y_predict = gnb.predict(X_test)
-# # print("Accuracy using Guassian Naive Bayes = ", metrics.accuracy_score(y_test, y_predict))
+# #Gradient Boost Classifier
+# gb = GradientBoostingClassifier()
+# gb.fit(X_train, y_train)
+# y_predict = gb.predict(X_test)
+# print("Accuracy using Gradient Boost = ", metrics.accuracy_score(y_test, y_predict))
 
 
-# #K Nearest neighbours
-# neigh = KNeighborsClassifier()
-# neigh.fit(X_train, y_train)
-# y_predict = neigh.predict(X_test)
+# #Gaussian Naive Bayes
+# gnb = GaussianNB()
+# gnb.fit(X_train, y_train)
+# y_predict = gnb.predict(X_test)
+# print("Accuracy using Guassian Naive Bayes = ", metrics.accuracy_score(y_test, y_predict))
 
-# print('K Nearest neighbours')
-# print("Mean Square Error", metrics.mean_squared_error(y_test, y_predict))
-# print("True value  in the test set: " + str(trueValue))
-# print("Predicted value  in the test set: " + str(predictedValue))
-# print('score:', r2_score(y_test, y_predict))
-# print("Accuracy using K Nearest Neighbours = ", metrics.accuracy_score(y_test, y_predict))
-# print('---------------------------------------------------------------')
-# #print("\ncompleted\n")
 
-# #svm_kernel_ovo = OneVsOneClassifier(SVC(kernel='linear', C=1)).fit(X_train, y_train)
-# # svm_kernel_ovr = OneVsRestClassifier(SVC(kernel='linear', C=1)).fit(X_train, y_train)
+#K Nearest neighbours
+filenameKNearest = "finalModelKNearest.sav"
+neigh = KNeighborsClassifier()
+neigh.fit(X_train, y_train)
+joblib.dump(neigh, filenameKNearest)
+y_predict = neigh.predict(X_test)
 
-# # svm_linear_ovo = OneVsOneClassifier(LinearSVC(C=1),).fit(X_train, y_train)
-# # svm_linear_ovr = OneVsRestClassifier(LinearSVC(C=1)).fit(X_train, y_train)
+print('K Nearest neighbours')
+print("Mean Square Error", metrics.mean_squared_error(y_test, y_predict))
+print("True value  in the test set: " + str(trueValue))
+print("Predicted value  in the test set: " + str(predictedValue))
+print('score:', r2_score(y_test, y_predict))
+print("Accuracy using K Nearest Neighbours = ", metrics.accuracy_score(y_test, y_predict))
+print('---------------------------------------------------------------')
+#print("\ncompleted\n")
 
-# # model accuracy for svc model
-# # accuracy = svm_kernel_ovr.score(X_test, y_test)
-# # print('Linear Kernel OneVsRest SVM accuracy: ' + str(accuracy))
-# #accuracy = svm_kernel_ovo.score(X_test, y_test)
-# #print('Linear Kernel OneVsOne SVM accuracy: ' + str(accuracy))
+#svm_kernel_ovo = OneVsOneClassifier(SVC(kernel='linear', C=1)).fit(X_train, y_train)
+# svm_kernel_ovr = OneVsRestClassifier(SVC(kernel='linear', C=1)).fit(X_train, y_train)
 
-# # model accuracy for svc model
-# # accuracy = svm_linear_ovr.score(X_test, y_test)
-# # print('LinearSVC OneVsRest SVM accuracy: ' + str(accuracy))
-# # accuracy = svm_linear_ovo.score(X_test, y_test)
-# # print('LinearSVC OneVsOne SVM accuracy: ' + str(accuracy))
+# svm_linear_ovo = OneVsOneClassifier(LinearSVC(C=1),).fit(X_train, y_train)
+# svm_linear_ovr = OneVsRestClassifier(LinearSVC(C=1)).fit(X_train, y_train)
+
+# model accuracy for svc model
+# accuracy = svm_kernel_ovr.score(X_test, y_test)
+# print('Linear Kernel OneVsRest SVM accuracy: ' + str(accuracy))
+#accuracy = svm_kernel_ovo.score(X_test, y_test)
+#print('Linear Kernel OneVsOne SVM accuracy: ' + str(accuracy))
+
+# model accuracy for svc model
+# accuracy = svm_linear_ovr.score(X_test, y_test)
+# print('LinearSVC OneVsRest SVM accuracy: ' + str(accuracy))
+# accuracy = svm_linear_ovo.score(X_test, y_test)
+# print('LinearSVC OneVsOne SVM accuracy: ' + str(accuracy))
 
 
