@@ -30,7 +30,8 @@ from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 from sklearn.multiclass import OneVsRestClassifier,OneVsOneClassifier
 import joblib
-
+from datetime import datetime
+import time
 
 data = pd.read_csv("airline-price-classification.csv")
 dataTest = pd.read_csv("airline-test-samples.csv")
@@ -98,7 +99,7 @@ def preprocessingfun(dtatSet):
     
     # dep_time preprocessing
     hours = dtatSet["dep_time"].str.split(":", expand=True)[0]
-    minutes = dtatSet["dep_time"].str.split(":", expand=True)[1]
+    minutes = dtatSet["dep_ti`me"].str.split(":", expand=True)[1]
     for i in range(len(minutes)):
         minutes[i] = float(minutes[i]) / 60
         hours[i] = float(hours[i]) + float(minutes[i])
@@ -292,15 +293,21 @@ X_train, X_test, y_train, y_test = train_test_split(
 #Decision Tree Model
 filenameDicision = "finalModelDicision.sav"
 dicision = tree.DecisionTreeClassifier(random_state=10, max_depth=None, min_samples_split=3, max_leaf_nodes=None)
+start_time = time.time()
 dicision = dicision.fit(X_train, y_train)
+end_time = time.time()
 joblib.dump(dicision, filenameDicision)
 # tree.plot_tree(dicision)
 # loadDicisionModel = joblib.load(filenameDicision)
+start_timet = time.time()
 y_predict   = dicision.predict(X_test)
+end_timet = time.time()
 y_predictTrain  = dicision.predict(X_train)
 # y_predictload = loadDicisionModel.predict(X_test)
     
 print('dicision tree')
+print('time for training',(end_time-start_time))
+print('time for test',(end_timet-start_timet))
 print("Mean Square Error for test", metrics.mean_squared_error(y_test, y_predict))
 print("Mean Square Error for training", metrics.mean_squared_error(y_train, y_predictTrain))
 print('score r2:', r2_score(y_test, y_predict))
@@ -315,11 +322,21 @@ print('---------------------------------------------------------------')
 # #Random Forest Classifier
 filenameRandomForest = "finalModelRandomForest.sav"
 rand_forest = RandomForestClassifier(max_depth=20, min_samples_leaf=4, n_estimators=15)
+
+start_time =time.time()
 rand_forest.fit(X_train, y_train)
+end_time = time.time()
+
 joblib.dump(rand_forest, filenameRandomForest)
+
+start_timet = time.time()
 y_predict = rand_forest.predict(X_test)
+end_timet = time.time()
+
 y_predictTrain   = rand_forest.predict(X_train)
 print('Random Forest Classifier')
+print('time for training',(end_time-start_time))
+print('time for test',(end_timet-start_timet))
 print("Mean Square Error for test", metrics.mean_squared_error(y_test, y_predict))
 print("Mean Square Error for training", metrics.mean_squared_error(y_train, y_predictTrain))
 print('score r2:', r2_score(y_test, y_predict))
@@ -348,12 +365,22 @@ filenameKNearest = "finalModelKNearest.sav"
 #   1 --> for manhatten algorithm
 #   2 --> for euclidian algorithm
 neigh = KNeighborsClassifier(n_neighbors=10, leaf_size=45, p=2)
+
+start_time =time.time()
 neigh.fit(X_train, y_train)
+end_time = time.time()
+
 joblib.dump(neigh, filenameKNearest)
+
+start_timet = time.time()
 y_predict = neigh.predict(X_test)
+end_timet = time.time()
+
 y_predictTrain = neigh.predict(X_train)
 
 print('K Nearest neighbours')
+print('time for training',(end_time-start_time))
+print('time for test',(end_timet-start_timet))
 print("Mean Square Error for test ", metrics.mean_squared_error(y_test, y_predict))
 print("Mean Square Error for training ", metrics.mean_squared_error(y_train, y_predictTrain))
 print('score r2:', r2_score(y_test, y_predict))
